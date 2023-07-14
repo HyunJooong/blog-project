@@ -19,5 +19,5 @@ public class SignupRequestDto {
     private String password;
 
     @NotBlank
-    private UserRoleEnum role;
+    private UserRoleEnum role; //회원 권한 부여 상수값으로 표현
 }

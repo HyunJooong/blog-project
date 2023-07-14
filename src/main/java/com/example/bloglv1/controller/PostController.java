@@ -7,10 +7,15 @@ import com.example.bloglv1.entity.User;
 import com.example.bloglv1.security.UserDetailsImpl;
 import com.example.bloglv1.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
+
 //Controller vs RestController
 @RestController
 @RequestMapping("/api")
@@ -37,24 +42,28 @@ public class PostController {
     @GetMapping("/post/{id}")
     public PostResponseDto getPost(@PathVariable Long id,
                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.getPost(id, userDetails);
+        return postService.getPost(id, userDetails.getUser());
 
     }
 
     //게시물 업데이트
     @PutMapping("/post/{id}")
     public PostResponseDto updatePost(@PathVariable Long id,
-                           @RequestBody PostRequestDto postRequestDto,
-                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                      @RequestBody PostRequestDto postRequestDto,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        return postService.updatePost(id, postRequestDto, userDetails);
+        return postService.updatePost(id, postRequestDto, userDetails.getUser());
     }
 
     //게시물 삭제
     @DeleteMapping("/post/{id}")
-    public void deletePost(@PathVariable Long id,
-                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-       postService.deletePost(id,userDetails);
+    public ResponseEntity<PostResponseDto> deletePost(@PathVariable Long id,
+                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        try {
+            postService.deletePost(id, userDetails.getUser());
+            return ResponseEntity.ok().body(new PostResponseDto("게시글 삭제 성공"));
+        } catch (RejectedExecutionException e) {
+            return ResponseEntity.badRequest().body(new PostResponseDto("권한이 없습니다."));
+        }
     }
-    PostResponseDto postResponseDto = new PostResponseDto("게시물이 삭제되었습니다.");
 }

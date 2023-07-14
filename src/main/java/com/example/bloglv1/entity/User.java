@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -23,8 +26,11 @@ public class User{
     private String password;
 
     @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(value = EnumType.STRING) //enum String 형태 선언 annotaton
     private UserRoleEnum role;
+
+    @OneToMany(mappedBy = "user" ,cascade = CascadeType.ALL)
+    private List<Post> postList = new ArrayList<>();
 
     public User(String username, String password,UserRoleEnum role) {
         this.username = username;

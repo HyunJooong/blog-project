@@ -7,6 +7,7 @@ import com.example.bloglv1.dto.SignupResponseDto;
 import com.example.bloglv1.entity.User;
 import com.example.bloglv1.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +24,7 @@ public class UserController {
 
     //회원가입
     @PostMapping("/user/signup")
-    public ResponseEntity<SignupResponseDto> signup(@RequestBody SignupRequestDto signupRequestDto){
+    public ResponseEntity<SignupResponseDto> signup(@Valid @RequestBody SignupRequestDto signupRequestDto){
         userService.signup(signupRequestDto);
 
         return ResponseEntity.status(201).body(new SignupResponseDto("회원가입에 성공하셨습니다."));

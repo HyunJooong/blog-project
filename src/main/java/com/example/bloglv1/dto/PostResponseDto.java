@@ -17,7 +17,7 @@ public class PostResponseDto {
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
 
-    private String msg; //에러메시지
+    private String msg; //메시지
 
     public PostResponseDto(String msg) {
         this.msg = msg;
