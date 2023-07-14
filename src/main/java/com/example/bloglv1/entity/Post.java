@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name="post")
+@Table(name = "post")
 @NoArgsConstructor
 public class Post extends TimeStamped {
 
@@ -28,11 +28,12 @@ public class Post extends TimeStamped {
     private String password;
 
 
-    public Post(PostRequestDto postRequestDto) {
+    public Post(PostRequestDto postRequestDto, User user) {
         this.title = postRequestDto.getTitle();
-        this.writer = postRequestDto.getWriter();
+        this.writer = user.getUsername();
         this.content = postRequestDto.getContent();
         this.password = postRequestDto.getPassword();
+
 
     }
 
@@ -42,11 +43,10 @@ public class Post extends TimeStamped {
         }
     }
 
-    public void update(String title, String writer, String content, String password) {
+    public void update(String title, String content) {
         this.title = title;
-        this.writer = writer;
         this.content = content;
-        this.password = password;
+
     }
 
 }
