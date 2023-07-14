@@ -4,7 +4,6 @@ import com.example.bloglv1.dto.PostRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
@@ -34,6 +33,7 @@ public class Post extends TimeStamped {
         this.writer = postRequestDto.getWriter();
         this.content = postRequestDto.getContent();
         this.password = postRequestDto.getPassword();
+
     }
 
     public void checkPassword(String password) {

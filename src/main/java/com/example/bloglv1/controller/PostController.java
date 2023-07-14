@@ -3,12 +3,13 @@ package com.example.bloglv1.controller;
 import com.example.bloglv1.dto.PostRequestDto;
 import com.example.bloglv1.dto.PostResponseDto;
 import com.example.bloglv1.entity.Post;
+import com.example.bloglv1.entity.User;
 import com.example.bloglv1.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+//Controller vs RestController
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -41,6 +42,7 @@ public class PostController {
         return postService.updatePost(id, postRequestDto);
     }
 
+    //게시물 삭제
     @DeleteMapping("/post/{id}")
     public void deletePost(@PathVariable Long id, @RequestBody PostRequestDto postRequestDto) {
         postService.deletePost(id,postRequestDto.getPassword() );

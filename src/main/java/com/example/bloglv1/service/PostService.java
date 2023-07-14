@@ -3,6 +3,7 @@ package com.example.bloglv1.service;
 import com.example.bloglv1.dto.PostRequestDto;
 import com.example.bloglv1.dto.PostResponseDto;
 import com.example.bloglv1.entity.Post;
+import com.example.bloglv1.entity.User;
 import com.example.bloglv1.repository.PostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,7 @@ public class PostService {
     }
 
 
+    //게시물 수정
     @Transactional
     public Post updatePost(Long id, PostRequestDto postRequestDto) {
         Post post = postRepository.findById(id).

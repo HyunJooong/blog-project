@@ -4,6 +4,7 @@ import com.example.bloglv1.dto.LoginRequestDto;
 import com.example.bloglv1.dto.LoginResponseDto;
 import com.example.bloglv1.dto.SignupRequestDto;
 import com.example.bloglv1.dto.SignupResponseDto;
+import com.example.bloglv1.entity.User;
 import com.example.bloglv1.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class UserController {
 
     private final UserService userService;
 
+    //회원가입
     @PostMapping("/user/signup")
     public ResponseEntity<SignupResponseDto> signup(@RequestBody SignupRequestDto signupRequestDto){
         userService.signup(signupRequestDto);
@@ -28,12 +30,13 @@ public class UserController {
 
     }
 
-    @PostMapping("/user/login")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
-
-        userService.login(loginRequestDto, response);
-
-        return ResponseEntity.status(201).body(new LoginResponseDto("로그인에 성공하셨습니다."));
-    }
+    //로그인
+//    @PostMapping("/user/login")
+//    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+//
+//        userService.login(loginRequestDto, response);
+//
+//        return ResponseEntity.status(201).body(new LoginResponseDto("로그인에 성공하셨습니다."));
+//    }
 
 }
