@@ -2,15 +2,11 @@ package com.example.bloglv1.controller;
 
 import com.example.bloglv1.dto.PostRequestDto;
 import com.example.bloglv1.dto.PostResponseDto;
-import com.example.bloglv1.entity.Post;
-import com.example.bloglv1.entity.User;
 import com.example.bloglv1.security.UserDetailsImpl;
 import com.example.bloglv1.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,6 +47,8 @@ public class PostController {
     public PostResponseDto updatePost(@PathVariable Long id,
                                       @RequestBody PostRequestDto postRequestDto,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+
 
         return postService.updatePost(id, postRequestDto, userDetails.getUser());
     }

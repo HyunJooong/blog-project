@@ -1,9 +1,7 @@
 package com.example.bloglv1.dto;
 
 import com.example.bloglv1.entity.Comment;
-import com.example.bloglv1.entity.Post;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;

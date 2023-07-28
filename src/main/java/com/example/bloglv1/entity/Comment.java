@@ -4,7 +4,6 @@ import com.example.bloglv1.dto.CommentRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Entity
 @NoArgsConstructor
@@ -17,22 +16,21 @@ public class Comment extends TimeStamped {
     private Long id;
 
     @Column(nullable = false)
-    private String commentWriter;
-
-    @Column(nullable = false)
     private String commentContent;
 
-    @ManyToOne
-    @JoinColumn(name = "post_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id") // 게시글에 댓글을 달기 때문에 게시글과 연관 관계 추가
     private Post post;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id") // 한 명의 사용자가 여러 댓글을 달기 때문에 사용자와 연관 관계 추가
     private User user;
 
 
-   public Comment(String commentContent){
-       this.commentContent = commentContent;
+   public Comment(CommentRequestDto commentContent){
+
+       this.commentContent = commentContent.getComment();
+
    }
 
    //본문 수정을 위해

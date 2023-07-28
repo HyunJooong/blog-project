@@ -2,9 +2,9 @@ package com.example.bloglv1.entity;
 
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Table(name = "users")
+@EqualsAndHashCode //필드 값 기준으로 하기 위해?
 public class User{
 
     @Id

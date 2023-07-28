@@ -5,14 +5,19 @@ import com.example.bloglv1.dto.PostResponseDto;
 import com.example.bloglv1.entity.Post;
 import com.example.bloglv1.entity.User;
 import com.example.bloglv1.entity.UserRoleEnum;
+import com.example.bloglv1.repository.CommentRepository;
 import com.example.bloglv1.repository.PostRepository;
+import com.example.bloglv1.repository.UserRepository;
 import com.example.bloglv1.security.UserDetailsImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.concurrent.RejectedExecutionException;
 
 @Service
@@ -20,6 +25,10 @@ import java.util.concurrent.RejectedExecutionException;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+
 
     //게시물 작성
     public PostResponseDto createPost(User user, PostRequestDto postRequestDto) {
@@ -28,9 +37,9 @@ public class PostService {
         Post post = new Post(postRequestDto, user);
 
         //게시글 저장
-        Post savePost = postRepository.save(post);
+        postRepository.save(post);
 
-        return new PostResponseDto(savePost);
+        return new PostResponseDto(post);
 
     }
 
@@ -56,9 +65,11 @@ public class PostService {
         Post post = postRepository.findById(id).
                 orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
 
-        if (post.getWriter().equals(user)) {
+//        List<Post> commentList = postRepository.findById(id);
+
+
             return new PostResponseDto(post);
-        } else return new PostResponseDto("접근 할 수 없습니다. ");
+
     }
 
 
@@ -67,12 +78,20 @@ public class PostService {
     public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto, User user) {
         //id 값 비교
         Post post = postRepository.findById(id).
-                orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+                orElseThrow(() -> new IllegalArgumentException("해당 글이 존재하지 않습니다."));
+
+        //로그인한 username 받아오기
+        User writer = userRepository.findByUsername(user.getUsername())
+                .orElseThrow(()-> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+
 
         //관리자 또는 작성자인지 체크
-        if (!(post.getWriter().equals(user)) || user.getRole().equals(UserRoleEnum.ADMIN)) {
-            throw new RejectedExecutionException();
+        if (!(post.getUser().getUsername().equals(writer.getUsername())
+                || user.getRole().equals(UserRoleEnum.ADMIN))) {
+            throw new RejectedExecutionException("수정할 수 없습니다.");
         }
+
+        //업데이트
         post.update(postRequestDto.getTitle(),
                 postRequestDto.getContent());
 
@@ -83,11 +102,17 @@ public class PostService {
     //게시물 삭제
     public void deletePost(Long id, User user) {
         //게시글 존재 체크
-        Post post = findPost(id);
+        Post post = postRepository.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("게시글이 존재하지 않습니다"));
+        //로그인한 유저 확인
+        User writer = userRepository.findByUsername(user.getUsername())
+                .orElseThrow(()-> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+
 
         //관리자 또는 작성자인지 체크
-        if (!user.getRole().equals(UserRoleEnum.ADMIN) && !post.getWriter().equals(user)) {
-            throw new RejectedExecutionException();
+        if (!(post.getUser().getUsername().equals(writer.getUsername())
+                || user.getRole().equals(UserRoleEnum.ADMIN))) {
+            throw new RejectedExecutionException("삭제할 수 없습니다.");
         }
 
         postRepository.delete(post); //게시물 삭제
@@ -100,3 +125,5 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("선택한 게시글이 존재하지 않습니다."));
     }
 }
+
+

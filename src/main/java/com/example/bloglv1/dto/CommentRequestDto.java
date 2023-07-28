@@ -5,10 +5,9 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class CommentRequestDto {
+public class CommentRequestDto{
 
-    private Long postId; // 게시글 확인
-    private final String comment; // 댓글
+    private  String comment; // 댓글
 
 
 }

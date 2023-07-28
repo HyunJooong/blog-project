@@ -26,36 +26,33 @@ public class Post extends TimeStamped {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private String password;
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    private List<Comment> comments; //댓글
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE) // mappedBy post는 comment에서 선언한 post로 값을 맞춰줘야 함
+    private List<Comment> commentList; //댓글
 
 
     public Post(PostRequestDto postRequestDto, User user) {
         this.title = postRequestDto.getTitle();
         this.writer = user.getUsername();
         this.content = postRequestDto.getContent();
-        this.password = postRequestDto.getPassword();
+        this.user = user;
 
 
     }
 
-    public void checkPassword(String password) {
-        if (!this.password.equals(password)) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-    }
 
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
 
+
+
     }
 
+    public void createComment(Comment comment) {
+        this.commentList.add(comment);
+    }
 }
