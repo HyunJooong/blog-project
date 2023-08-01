@@ -2,13 +2,12 @@ package com.example.bloglv1.service;
 
 import com.example.bloglv1.dto.PostRequestDto;
 import com.example.bloglv1.dto.PostResponseDto;
-import com.example.bloglv1.entity.Post;
-import com.example.bloglv1.entity.User;
-import com.example.bloglv1.entity.UserRoleEnum;
+import com.example.bloglv1.entity.*;
 import com.example.bloglv1.repository.CommentRepository;
+import com.example.bloglv1.repository.LikeRepository;
 import com.example.bloglv1.repository.PostRepository;
 import com.example.bloglv1.repository.UserRepository;
-import com.example.bloglv1.security.UserDetailsImpl;
+import com.sun.jdi.request.DuplicateRequestException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalLong;
 import java.util.concurrent.RejectedExecutionException;
 
 @Service
@@ -28,6 +26,7 @@ public class PostService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
 
 
     //게시물 작성
@@ -60,15 +59,14 @@ public class PostService {
     }
 
     //게시물 선택 조회
+
     public PostResponseDto getPost(Long id, User user) {
 
         Post post = postRepository.findById(id).
                 orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
 
-//        List<Post> commentList = postRepository.findById(id);
 
-
-            return new PostResponseDto(post);
+        return new PostResponseDto(post);
 
     }
 
@@ -82,7 +80,7 @@ public class PostService {
 
         //로그인한 username 받아오기
         User writer = userRepository.findByUsername(user.getUsername())
-                .orElseThrow(()-> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
 
 
         //관리자 또는 작성자인지 체크
@@ -103,10 +101,10 @@ public class PostService {
     public void deletePost(Long id, User user) {
         //게시글 존재 체크
         Post post = postRepository.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("게시글이 존재하지 않습니다"));
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다"));
         //로그인한 유저 확인
         User writer = userRepository.findByUsername(user.getUsername())
-                .orElseThrow(()-> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
 
 
         //관리자 또는 작성자인지 체크
@@ -124,6 +122,51 @@ public class PostService {
         return postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("선택한 게시글이 존재하지 않습니다."));
     }
+
+    //좋아요 생성
+    public void clickLike(Long id, User user) {
+
+        //게시물 존재 확인
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다."));
+
+        if (likeRepository.findByPostAndUser(post, user).isPresent()) {
+
+            throw new DuplicateRequestException("좋아요를 누를 수 없습니다.");
+        } else {
+
+            Likes likes = likeRepository.findByPostAndUser(post, user).get();
+            likeRepository.save(likes);
+
+
+        }
+    }
+
+
+    //좋아요 취소
+//    @Transactional
+//    public void cancelLike(Long id, User user) {
+//        //게시물 존재 여부 확인
+//        Post post = postRepository.findById(id)
+//                .orElseThrow(()-> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
+//
+//
+//
+////        if(likeRepository.existByUserAndPost(user, post).equals(true)){
+////            likeRepository.deleteById(
+////        }
+////
+////        Likes likes = likeRepository.
+////
+////
+////
+////        //좋아요
+//
+//
+//
+//        Likes likes = likeRepository.findByPostId(id).orElse(null);
+//            likeRepository.deleteById(likes.getId());
+//        }
 }
 
 

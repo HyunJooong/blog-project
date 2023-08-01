@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,8 +32,10 @@ public class Post extends TimeStamped {
     private User user;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE) // mappedBy post는 comment에서 선언한 post로 값을 맞춰줘야 함
-    private List<Comment> commentList; //댓글
+    private List<Comment> commentList ; //댓글
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE) //likes의 변수 이름 post로 mappedBy를 해주고 연관 관계 주인은 post_id
+    private List<Likes> likesList; // 좋아요
 
     public Post(PostRequestDto postRequestDto, User user) {
         this.title = postRequestDto.getTitle();

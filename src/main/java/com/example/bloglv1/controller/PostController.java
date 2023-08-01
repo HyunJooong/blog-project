@@ -5,6 +5,7 @@ import com.example.bloglv1.dto.PostResponseDto;
 import com.example.bloglv1.security.UserDetailsImpl;
 import com.example.bloglv1.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -49,7 +50,6 @@ public class PostController {
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
 
-
         return postService.updatePost(id, postRequestDto, userDetails.getUser());
     }
 
@@ -64,4 +64,32 @@ public class PostController {
             return ResponseEntity.badRequest().body(new PostResponseDto("권한이 없습니다."));
         }
     }
+
+    //게시물 좋아요 기능
+    @PostMapping("/post/{id}/like")
+    public ResponseEntity<PostResponseDto> clickLike(@PathVariable Long id,
+                                                     @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        try {
+            postService.clickLike(id, userDetails.getUser());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new PostResponseDto("게시글 좋아요 성공"));
+        } catch (RejectedExecutionException e) {
+            return ResponseEntity.badRequest().body(new PostResponseDto("권한이 없습니다."));
+        }
+
+
+    }
+
+    //게시물 좋아요 취소
+//    @DeleteMapping("/post/{id}/likes")
+//    public String cancelLike(@PathVariable Long id,
+//                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+//
+//        postService.cancelLike(id, userDetails.getUser());
+//
+//        return "취소되었습니다,";
+//
+//
+//
+//    }
 }

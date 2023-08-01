@@ -43,7 +43,7 @@ public class CommentService {
 
 
 
-        return new CommentResponseDto("댓글이 생성되었습니다,", comment);
+        return new CommentResponseDto(comment);
 
 
     }
@@ -69,7 +69,7 @@ public class CommentService {
         //댓글 수정
         comment.setCommentContent(commentRequestDto.getComment());
 
-        return new CommentResponseDto("댓글 수정 완료", comment);
+        return new CommentResponseDto(comment);
 
 
     }

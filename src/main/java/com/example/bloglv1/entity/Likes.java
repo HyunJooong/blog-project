@@ -8,24 +8,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Table(name = "likes")
-public class Likes {
+public class Likes extends TimeStamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
-    private boolean likes;
+    private Boolean likes;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne
-    @JoinColumn(name = "comment_id")
-    private Comment comment;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Likes(Post post, User user) {
+        this.post = post;
+        this.user = user;
+    }
 }
