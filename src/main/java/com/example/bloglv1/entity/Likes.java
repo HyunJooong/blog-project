@@ -14,8 +14,6 @@ public class Likes extends TimeStamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private Boolean likes;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -29,5 +27,6 @@ public class Likes extends TimeStamped{
     public Likes(Post post, User user) {
         this.post = post;
         this.user = user;
+
     }
 }

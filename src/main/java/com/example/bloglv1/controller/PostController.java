@@ -80,16 +80,19 @@ public class PostController {
 
     }
 
+
     //게시물 좋아요 취소
-//    @DeleteMapping("/post/{id}/likes")
-//    public String cancelLike(@PathVariable Long id,
-//                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//
-//        postService.cancelLike(id, userDetails.getUser());
-//
-//        return "취소되었습니다,";
-//
-//
-//
-//    }
+    @DeleteMapping("/post/{id}/like")
+    public ResponseEntity<PostResponseDto> rollbackLike(@PathVariable Long id,
+                                                        @AuthenticationPrincipal UserDetailsImpl userDetails){
+
+        try {
+            postService.rollbackLike(id, userDetails.getUser());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(new PostResponseDto("좋아요가 취소되었습니다."));
+        }catch (RejectedExecutionException e) {
+            return ResponseEntity.badRequest().body(new PostResponseDto("좋아요 취소를 할 수 없습니다."));
+        }
+
+
+    }
 }

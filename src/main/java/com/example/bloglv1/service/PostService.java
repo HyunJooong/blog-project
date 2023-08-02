@@ -118,12 +118,15 @@ public class PostService {
 
     }
 
+
     public Post findPost(Long id) {
         return postRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("선택한 게시글이 존재하지 않습니다."));
     }
 
+
     //좋아요 생성
+    @Transactional
     public void clickLike(Long id, User user) {
 
         //게시물 존재 확인
@@ -131,42 +134,34 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다."));
 
         if (likeRepository.findByPostAndUser(post, user).isPresent()) {
-
-            throw new DuplicateRequestException("좋아요를 누를 수 없습니다.");
+            throw new DuplicateRequestException("좋아요를 이미 누른 상태입니다.");
         } else {
 
-            Likes likes = likeRepository.findByPostAndUser(post, user).get();
+            Likes likes = new Likes(post, user);
             likeRepository.save(likes);
 
 
         }
     }
 
+    @Transactional
+    public void rollbackLike(Long id, User user) {
 
-    //좋아요 취소
-//    @Transactional
-//    public void cancelLike(Long id, User user) {
-//        //게시물 존재 여부 확인
-//        Post post = postRepository.findById(id)
-//                .orElseThrow(()-> new IllegalArgumentException("해당 게시물이 존재하지 않습니다."));
-//
-//
-//
-////        if(likeRepository.existByUserAndPost(user, post).equals(true)){
-////            likeRepository.deleteById(
-////        }
-////
-////        Likes likes = likeRepository.
-////
-////
-////
-////        //좋아요
-//
-//
-//
-//        Likes likes = likeRepository.findByPostId(id).orElse(null);
-//            likeRepository.deleteById(likes.getId());
-//        }
-}
+        //게시물 확인
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("게시물이 존재하지 않습니다"));
+
+        Optional<Likes> foundLikes = likeRepository.findByPostAndUser(post, user);
+
+        if (foundLikes.isPresent()) {
+            Likes likes = foundLikes.get();
+            likeRepository.delete(likes);
+        }else throw new IllegalArgumentException("좋아요를 취소할 수 없습니다.");
+
+
+        }
+    }
+
+
 
 
